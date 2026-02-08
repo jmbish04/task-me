@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response("Missing prompt", { status: 400 });
   }
 
-  const env = (locals.runtime?.env ?? import.meta.env) as Record<string, string>;
+  const env = (locals.runtime?.env ?? import.meta.env) as import("@/lib/agents/genesis").GenesisEnv;
   try {
     const result = await runGenesis(prompt, env);
     const projectId = (result.project as { id?: string } | undefined)?.id;
