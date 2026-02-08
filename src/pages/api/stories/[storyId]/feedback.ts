@@ -1,23 +1,9 @@
 import type { APIRoute } from "astro";
 import { storeMockupInR2 } from "@/lib/r2";
 import { createSupabaseClientFromEnv } from "@/lib/supabase";
-import { StitchClient } from "@/lib/stitch";
+import { StitchClient, extractStitchImageUrl } from "@/lib/stitch";
 
 export const prerender = false;
-
-const getImageUrl = (response: unknown) => {
-  if (!response || typeof response !== "object") {
-    return null;
-  }
-  const payload = response as Record<string, unknown>;
-  return (
-    (payload.imageUrl as string | undefined) ??
-    (payload.image_url as string | undefined) ??
-    (payload.url as string | undefined) ??
-    (payload.screen as { imageUrl?: string } | undefined)?.imageUrl ??
-    null
-  );
-};
 
 export const POST: APIRoute = async ({ request, params, locals }) => {
   const storyId = params.storyId;
@@ -60,7 +46,7 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
     modelId: "GEMINI_3_FLASH",
   });
 
-  const imageUrl = getImageUrl(stitchResponse);
+  const imageUrl = extractStitchImageUrl(stitchResponse);
   if (imageUrl) {
     const stored = await storeMockupInR2(
       env,

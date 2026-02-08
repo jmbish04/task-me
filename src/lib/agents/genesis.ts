@@ -1,7 +1,8 @@
+import { z } from "zod";
 import { Octokit } from "octokit";
 import { storeMockupInR2, type R2Env } from "@/lib/r2";
 import { createSupabaseClientFromEnv, type SupabaseEnv } from "@/lib/supabase";
-import { StitchClient } from "@/lib/stitch";
+import { StitchClient, extractStitchImageUrl } from "@/lib/stitch";
 
 type AiBinding = {
   run: (model: string, input: Record<string, unknown>) => Promise<unknown>;
@@ -36,6 +37,65 @@ type GenesisPlan = {
   title: string;
   description?: string;
   epics: GenesisEpic[];
+};
+
+const FALLBACK_PLAN: GenesisPlan = {
+  title: "Taskosaur-AI MVP",
+  description: "AI-native project management foundation.",
+  epics: [
+    {
+      title: "Project Genesis",
+      description: "Bootstrap projects and plans.",
+      stories: [
+        {
+          title: "Create a project from a prompt",
+          description: "Capture a prompt and generate epics, stories, and tasks.",
+          tasks: [
+            { title: "Collect prompt input" },
+            { title: "Persist project plan to Supabase" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const genesisTaskSchema = z.object({
+  title: z.string().min(1).catch("Task"),
+  description: z.string().optional(),
+});
+
+const genesisStorySchema = z.object({
+  title: z.string().min(1).catch("Story"),
+  description: z.string().optional(),
+  tasks: z.array(genesisTaskSchema).optional().default([]),
+});
+
+const genesisEpicSchema = z.object({
+  title: z.string().min(1).catch("Epic"),
+  description: z.string().optional(),
+  stories: z.array(genesisStorySchema).optional().default([]),
+});
+
+const genesisPlanSchema = z.object({
+  title: z.string().min(1).catch(FALLBACK_PLAN.title),
+  description: z.string().optional(),
+  epics: z.array(genesisEpicSchema).optional().default([]),
+});
+
+type GenesisInsertResult = {
+  project: {
+    id: string;
+    title: string;
+    description: string | null;
+    repo_url: string | null;
+  };
+  stories: Array<{
+    id: string;
+    epic_id: string | null;
+    title: string;
+    description: string | null;
+  }>;
 };
 
 // Default Cloudflare Workers AI model identifier; see https://developers.cloudflare.com/workers-ai/models/.
@@ -81,27 +141,6 @@ const buildKnowledgeContext = () =>
     .map(([tool, response]) => `${tool}: ${response}`)
     .join("\n");
 
-const FALLBACK_PLAN: GenesisPlan = {
-  title: "Taskosaur-AI MVP",
-  description: "AI-native project management foundation.",
-  epics: [
-    {
-      title: "Project Genesis",
-      description: "Bootstrap projects and plans.",
-      stories: [
-        {
-          title: "Create a project from a prompt",
-          description: "Capture a prompt and generate epics, stories, and tasks.",
-          tasks: [
-            { title: "Collect prompt input" },
-            { title: "Persist project plan to Supabase" },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
 const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -126,15 +165,27 @@ const extractPlan = (raw: unknown): GenesisPlan => {
       : (candidate as { choices?: Array<{ message?: { content?: unknown } }> })
           .choices?.[0]?.message?.content ?? candidate;
 
-  if (typeof content === "string") {
-    try {
-      return JSON.parse(content) as GenesisPlan;
-    } catch {
-      return { ...FALLBACK_PLAN, description: content };
-    }
+  const structured =
+    typeof content === "string"
+      ? (() => {
+          try {
+            return JSON.parse(content);
+          } catch {
+            return null;
+          }
+        })()
+      : content;
+
+  const parsed = genesisPlanSchema.safeParse(structured);
+  if (parsed.success) {
+    return parsed.data;
   }
 
-  return (content as GenesisPlan) ?? FALLBACK_PLAN;
+  if (typeof content === "string") {
+    return { ...FALLBACK_PLAN, description: content };
+  }
+
+  return FALLBACK_PLAN;
 };
 
 const generatePlan = async (
@@ -160,21 +211,6 @@ const generatePlan = async (
   });
 
   return extractPlan(response);
-};
-
-const getImageUrlFromResponse = (response: unknown) => {
-  if (!response || typeof response !== "object") {
-    return null;
-  }
-  const candidate = response as Record<string, unknown>;
-  return (
-    (candidate.imageUrl as string | undefined) ??
-    (candidate.image_url as string | undefined) ??
-    (candidate.url as string | undefined) ??
-    (candidate.screen as { imageUrl?: string } | undefined)?.imageUrl ??
-    (candidate.result as { imageUrl?: string } | undefined)?.imageUrl ??
-    null
-  );
 };
 
 const getProjectIdFromResponse = (response: unknown, fallback: string) => {
@@ -211,19 +247,26 @@ export const runGenesis = async (prompt: string, env: GenesisEnv) => {
     return { plan, repoUrl };
   }
 
-  const { data: project, error: projectError } = await supabase
-    .from("projects")
-    .insert({
-      title: plan.title,
-      description: plan.description ?? prompt,
+  const { data: genesisResult, error: genesisError } = await supabase.rpc(
+    "run_genesis_plan",
+    {
+      plan,
       repo_url: repoUrl,
-    })
-    .select()
-    .single();
+      prompt,
+    },
+  );
 
-  if (projectError || !project) {
-    throw projectError ?? new Error("Failed to create project");
+  if (genesisError || !genesisResult) {
+    throw genesisError ?? new Error("Failed to create project");
   }
+
+  const typedResult = genesisResult as GenesisInsertResult;
+  if (!typedResult.project) {
+    throw new Error("Genesis transaction did not return a project");
+  }
+
+  const project = typedResult.project;
+  const stories = typedResult.stories ?? [];
 
   const stitch =
     env.STITCH_API_KEY &&
@@ -238,71 +281,32 @@ export const runGenesis = async (prompt: string, env: GenesisEnv) => {
       )
     : project.id;
 
-  for (const epic of plan.epics ?? []) {
-    const { data: epicRow, error: epicError } = await supabase
-      .from("epics")
-      .insert({
-        project_id: project.id,
-        title: epic.title,
-        description: epic.description,
-      })
-      .select()
-      .single();
-
-    if (epicError || !epicRow) {
-      throw epicError ?? new Error("Failed to create epic");
+  for (const story of stories) {
+    if (!stitch) {
+      continue;
     }
 
-    for (const story of epic.stories ?? []) {
-      const { data: storyRow, error: storyError } = await supabase
-        .from("stories")
-        .insert({
-          project_id: project.id,
-          epic_id: epicRow.id,
-          title: story.title,
-          description: story.description,
-          status: "draft",
-        })
-        .select()
-        .single();
+    const stitchResponse = await stitch.generateScreenFromText({
+      projectId: stitchProjectId,
+      prompt: story.description ?? story.title,
+      deviceType: "DESKTOP",
+      modelId: "GEMINI_3_FLASH",
+    });
 
-      if (storyError || !storyRow) {
-        throw storyError ?? new Error("Failed to create story");
-      }
+    const imageUrl = extractStitchImageUrl(stitchResponse);
+    if (imageUrl) {
+      const stored = await storeMockupInR2(
+        env,
+        imageUrl,
+        `projects/${project.id}/stories/${story.id}`,
+      );
 
-      if (stitch) {
-        const stitchResponse = await stitch.generateScreenFromText({
-          projectId: stitchProjectId,
-          prompt: story.description ?? story.title,
-          deviceType: "DESKTOP",
-          modelId: "GEMINI_3_FLASH",
-        });
-
-        const imageUrl = getImageUrlFromResponse(stitchResponse);
-        if (imageUrl) {
-          const stored = await storeMockupInR2(
-            env,
-            imageUrl,
-            `projects/${project.id}/stories/${storyRow.id}`,
-          );
-
-          await supabase.from("mockups").insert({
-            story_id: storyRow.id,
-            source_url: imageUrl,
-            r2_key: stored.key,
-            r2_url: stored.publicUrl,
-          });
-        }
-      }
-
-      for (const task of story.tasks ?? []) {
-        await supabase.from("tasks").insert({
-          story_id: storyRow.id,
-          title: task.title,
-          description: task.description,
-          status: "todo",
-        });
-      }
+      await supabase.from("mockups").insert({
+        story_id: story.id,
+        source_url: imageUrl,
+        r2_key: stored.key,
+        r2_url: stored.publicUrl,
+      });
     }
   }
 

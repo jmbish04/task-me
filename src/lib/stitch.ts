@@ -148,3 +148,18 @@ export class StitchClient {
     return (await response.json()) as TResponse;
   }
 }
+
+export const extractStitchImageUrl = (response: unknown) => {
+  if (!response || typeof response !== "object") {
+    return null;
+  }
+  const payload = response as Record<string, unknown>;
+  return (
+    (payload.imageUrl as string | undefined) ??
+    (payload.image_url as string | undefined) ??
+    (payload.url as string | undefined) ??
+    (payload.screen as { imageUrl?: string } | undefined)?.imageUrl ??
+    (payload.result as { imageUrl?: string } | undefined)?.imageUrl ??
+    null
+  );
+};

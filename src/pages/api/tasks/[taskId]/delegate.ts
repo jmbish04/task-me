@@ -19,38 +19,37 @@ export const POST: APIRoute = async ({ params, locals }) => {
 
   const { data: task, error: taskError } = await supabase
     .from("tasks")
-    .select("id, title, description, story_id")
+    .select(
+      `
+        id, title, description, story_id,
+        story:stories (
+          id, project_id,
+          project:projects ( id, repo_url ),
+          mockups:mockups ( r2_url, source_url, created_at )
+        )
+      `,
+    )
     .eq("id", taskId)
+    .order("created_at", { foreignTable: "story.mockups", ascending: false })
+    .limit(1, { foreignTable: "story.mockups" })
     .single();
 
   if (taskError || !task) {
     return new Response("Task not found", { status: 404 });
   }
 
-  const { data: story } = await supabase
-    .from("stories")
-    .select("id, project_id")
-    .eq("id", task.story_id)
-    .single();
-
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id, repo_url")
-    .eq("id", story?.project_id ?? "")
-    .single();
-
-  const { data: mockups } = await supabase
-    .from("mockups")
-    .select("r2_url, source_url")
-    .eq("story_id", story?.id ?? "")
-    .order("created_at", { ascending: false })
-    .limit(1);
+  if (!task.story) {
+    return new Response("Story not found for task", { status: 404 });
+  }
 
   const julesResult = await delegateToJules(
     {
-      repoUrl: project?.repo_url ?? "",
+      repoUrl: task.story?.project?.repo_url ?? "",
       taskDescription: task.description ?? task.title,
-      mockupUrl: mockups?.[0]?.r2_url ?? mockups?.[0]?.source_url ?? null,
+      mockupUrl:
+        task.story?.mockups?.[0]?.r2_url ??
+        task.story?.mockups?.[0]?.source_url ??
+        null,
     },
     { apiUrl: env.JULES_API_URL },
   );

@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum StoryStatus {
+  draft
+  active
+  done
+}
+
+enum TaskStatus {
+  todo
+  in_progress
+  done
+}
+
 model Project {
   id          String   @id @default(uuid()) @db.Uuid
   title       String
@@ -42,7 +54,7 @@ model Story {
   epicId      String?  @map("epic_id") @db.Uuid
   title       String
   description String?
-  status      String   @default("draft")
+  status      StoryStatus @default(draft)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -59,7 +71,7 @@ model Task {
   storyId     String   @map("story_id") @db.Uuid
   title       String
   description String?
-  status      String   @default("todo")
+  status      TaskStatus @default(todo)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
