@@ -1,0 +1,244 @@
+---
+import RootLayout from "../layouts/RootLayout.astro";
+import DarkModeToggle from "../components/DarkModeToggle.astro";
+import { InputLabel } from "@/components/ui/input-label";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { TextAreaLabel } from "@/components/ui/textarea-label";
+import { CheckboxLabel } from "@/components/ui/checkbox-label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
+import { Divider } from "@/components/ui/divider";
+import { SpinnerDots, SpinnerCircular } from "@/components/ui/spinner";
+---
+
+<RootLayout>
+  <div class="page-section page-gap">
+    <h1 class="flex items-center gap-x-4">
+      Style Guide
+      <DarkModeToggle />
+    </h1>
+    <div class="text-description">
+      This style guide demonstrates the configured typography settings and theme
+      colors
+    </div>
+
+    <div class="my-12 grid grid-cols-1 lg:grid-cols-3">
+      <section class="">
+        <h2 class="mb-6">Typography</h2>
+        <div class="space-y-4">
+          <h1>Heading 1</h1>
+          <h2>Heading 2</h2>
+          <h3>Heading 3</h3>
+          <h4>Heading 4</h4>
+          <h5>Heading 5</h5>
+          <h6>Heading 6</h6>
+          <div class="text-subtitle">Subtitle</div>
+          <div class="text-description">Description</div>
+          <div class="text-caption">Caption</div>
+        </div>
+      </section>
+      <section class="col-span-1 lg:col-span-2">
+        <h2 class="mb-6">Fonts</h2>
+        <div class="space-y-4">
+          <div class="border rounded p-2">
+            <div class="font-sans">Font Sans (default)</div>
+            <div class="flex gap-x-4 mt-2">
+              {
+                ["lighter", "normal", "semibold", "bold", "bolder"].map((i) => (
+                  <>
+                    <>
+                      <span class="font-sans" style={`font-weight: ${i}`}>
+                        {i}
+                      </span>
+                      <span>|</span>
+                    </>
+                  </>
+                ))
+              }
+            </div>
+          </div>
+          <div class="border rounded p-2">
+            <div class="font-serif">Font Serif</div>
+            <div class="flex gap-x-4 mt-2">
+              {
+                ["lighter", "normal", "semibold", "bold", "bolder"].map((i) => (
+                  <>
+                    <>
+                      <span class="font-serif" style={`font-weight: ${i}`}>
+                        {i}
+                      </span>
+                      <span>|</span>
+                    </>
+                  </>
+                ))
+              }
+            </div>
+          </div>
+          <div class="border rounded p-2">
+            <div class="font-mono">Font Mono</div>
+            <div class="flex gap-x-4 mt-2">
+              {
+                ["lighter", "normal", "semibold", "bold", "bolder"].map((i) => (
+                  <>
+                    <>
+                      <span class="font-mono" style={`font-weight: ${i}`}>
+                        {i}
+                      </span>
+                      <span>|</span>
+                    </>
+                  </>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section class="mb-12">
+      <h2 class="mb-6">Colors</h2>
+      <div class="text-description mb-4">
+        The theme uses a simple background and foreground convention for colors.
+        The background variable is used for the background color of the
+        component and the foreground variable is used for the text color.
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="p-4 bg-primary text-primary-foreground rounded">
+          Primary
+        </div>
+        <div class="p-4 bg-secondary text-secondary-foreground rounded">
+          Secondary
+        </div>
+        <div class="p-4 bg-card text-card-foreground rounded">Card</div>
+        <div class="p-4 bg-muted text-muted-foreground rounded">Muted</div>
+        <div class="p-4 bg-accent text-accent-foreground rounded">Accent</div>
+        <div class="p-4 bg-destructive text-destructive-foreground rounded">
+          Destructive
+        </div>
+        <div class="p-4 bg-success text-success-foreground rounded">
+          Success
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="p-4 bg-sidebar text-sidebar-foreground rounded border">
+          Sidebar
+          <div
+            class="p-4 mt-4 rounded bg-sidebar-accent text-sidebar-accent-foreground"
+          >
+            Sidebar Accent
+          </div>
+          <div
+            class="p-4 mt-4 rounded bg-sidebar-primary text-sidebar-primary-foreground"
+          >
+            Sidebar Primary
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="mb-12">
+      <h2 class="mb-6">UI Elements</h2>
+      <div class="text-description mb-4">
+        This template comes with some ShadCN components already included. They
+        can be customized by editing the files in the `components/ui` folder.
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="border rounded-lg p-4 flex flex-col gap-y-4">
+          <div class="font-bold">Inputs</div>
+          <InputLabel label="Text Input" />
+          <TextAreaLabel label="Text Area" />
+          <CheckboxLabel label="Checkbox" />
+        </div>
+        <div class="border rounded-lg p-4 flex flex-col gap-y-4">
+          <div class="font-bold">Buttons</div>
+          <Button variant={"default"}>Default</Button>
+          <Button variant={"secondary"}>Secondary</Button>
+          <Button variant={"destructive"}>Destructive</Button>
+          <Button variant={"outline"}>Outline</Button>
+          <Button variant={"ghost"}>Ghost</Button>
+          <Button variant={"link"}>Link</Button>
+        </div>
+        <div class="border rounded-lg p-4">
+          <div class="font-bold mb-4">Card</div>
+          <Card>
+            <CardHeader>
+              <CardTitle> Card Title</CardTitle>
+              <CardDescription> This is the card description.</CardDescription>
+            </CardHeader>
+            <CardContent> This is my card content</CardContent>
+            <CardFooter>
+              <Button className="w-full">Test</Button>
+            </CardFooter>
+          </Card>
+        </div>
+        <div class="border rounded-lg p-4 flex flex-col gap-y-4">
+          <div class="font-bold">Alert</div>
+          <Alert>
+            <Info />
+            <AlertTitle>Default Alert</AlertTitle>
+            <AlertDescription>This is a description</AlertDescription>
+          </Alert>
+          <Alert variant={"destructive"}>
+            <Info />
+            <AlertTitle>Destructive Alert</AlertTitle>
+            <AlertDescription>This is a description</AlertDescription>
+          </Alert>
+          <Alert variant={"success"}>
+            <Info />
+            <AlertTitle>Success Alert</AlertTitle>
+            <AlertDescription>This is a description</AlertDescription>
+          </Alert>
+        </div>
+        <div class="border rounded-lg p-4 flex flex-col gap-y-4">
+          <div class="font-bold">Divider</div>
+          <div>
+            Default
+            <Divider />
+          </div>
+          <div class="mb-2">
+            Simple
+            <Divider simple />
+          </div>
+          <div>
+            Custom Icon
+            <Divider>
+              <Info />
+            </Divider>
+          </div>
+        </div>
+        <div class="border rounded-lg p-4 flex flex-col gap-y-4">
+          <div class="font-bold">Spinners</div>
+          <SpinnerCircular />
+          <SpinnerDots />
+        </div>
+      </div>
+    </section>
+  </div>
+</RootLayout>
+
+<script>
+  const fontSerif = document.querySelector(".font-serif");
+  const fontSans = document.querySelector(".font-sans");
+  const fontMono = document.querySelector(".font-mono");
+
+  if (fontSerif) {
+    const font = window.getComputedStyle(fontSerif, null).fontFamily;
+    fontSerif.innerHTML = `Font Serif <div class="text-caption">${font}</div>`;
+  }
+
+  if (fontSans) {
+    const font = window.getComputedStyle(fontSans, null).fontFamily;
+    fontSans.innerHTML = `Font Sans (default) <div class="text-caption">${font}</div>`;
+  }
+
+  if (fontMono) {
+    const font = window.getComputedStyle(fontMono, null).fontFamily;
+    fontMono.innerHTML = `Font Mono <div class="text-caption">${font}</div>`;
+  }
+</script>

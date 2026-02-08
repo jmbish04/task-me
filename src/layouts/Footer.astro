@@ -1,0 +1,18 @@
+---
+import { Github } from 'lucide-react';
+const today = new Date();
+---
+
+<footer class="text-center pt-8 pb-24 px-4 bg-muted">
+  <div class="page-container">
+    <nav
+      class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6"
+      aria-label="Footer"
+    >
+      <a href="/styleguide" class="link">Styleguide</a>
+    </nav>
+    <p class="mt-10 text-center text-sm/6 text-muted-foreground">
+      &copy; {today.getFullYear()} This Kickstart project was created by <a class="link" href="https://github.com/cooperjones" target="_blank">G Cooper Jones</a>.
+    </p>
+  </div>
+</footer>

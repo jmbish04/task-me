@@ -1,0 +1,324 @@
+---
+import { Button } from "@/components/ui/button";
+import RootLayout from "@/layouts/RootLayout.astro";
+import { codeSample } from "../lib/code-sample";
+---
+
+<RootLayout>
+  <div>
+    <div
+      class="relative isolate overflow-hidden bg-gradient-to-b from-indigo-100/20"
+    >
+      <div
+        class="mx-auto max-w-7xl pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:py-40"
+      >
+        <div class="px-6 lg:px-0 lg:pt-4">
+          <div class="mx-auto max-w-2xl">
+            <div class="max-w-lg">
+              <h1 class="mt-10">
+                Astro +<br />Cloudflare<br />Kickstart Project
+              </h1>
+              <p class="mt-8 text-subtitle">
+                Build and launch with one framework, one vendor, zero hassle.
+              </p>
+              <div class="mt-10 flex items-center gap-x-6">
+                <!--<Button as="a" href="#">Documentation</Button>-->
+                <Button as="a" href="https://github.com/cooperjones/astro-cloudflare-kickstart" variant="default" target="_blank"
+                  >Check it out on GitHub <span aria-hidden="true">→</span></Button
+                >
+                or
+                <Button as="a" href="https://github.com/new?template_name=astro-cloudflare-kickstart" variant="link" target="_blank"
+                  >Clone the template repository <span aria-hidden="true">→</span></Button
+                >
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-20 sm:mt-24 md:mx-auto md:max-w-2xl lg:mx-0 lg:mt-0 lg:w-screen"
+        >
+          <div
+            class="absolute inset-y-0 right-1/2 -z-10 -mr-10 w-[200%] skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 md:-mr-20 lg:-mr-36"
+            aria-hidden="true"
+          >
+          </div>
+          <div class="shadow-lg md:rounded-3xl">
+            <div
+              class="bg-indigo-500 [clip-path:inset(0)] md:[clip-path:inset(0_round_theme(borderRadius.3xl))]"
+            >
+              <div
+                class="absolute -inset-y-px left-1/2 -z-10 ml-10 w-[200%] skew-x-[-30deg] bg-indigo-100 opacity-20 ring-1 ring-inset ring-white md:ml-20 lg:ml-36"
+                aria-hidden="true"
+              >
+              </div>
+              <div class="relative px-6 pt-8 sm:pt-16 md:pl-16 md:pr-0">
+                <div class="mx-auto max-w-2xl md:mx-0 md:max-w-none">
+                  <div
+                    class="w-screen overflow-hidden rounded-tl-xl bg-gray-900"
+                  >
+                    <div class="flex bg-gray-800/40 ring-1 ring-white/5">
+                      <div
+                        class="-mb-px flex text-sm/6 font-medium text-gray-400"
+                      >
+                        <div
+                          class="border-b border-r border-b-white/20 border-r-white/10 bg-white/5 px-4 py-2 text-white"
+                        >
+                          index.astro
+                        </div>
+                        <div class="border-r border-gray-600/10 px-4 py-2">
+                          astro.config.js
+                        </div>
+                      </div>
+                    </div>
+                    <pre
+                      class="px-6 pb-14 pt-6 text-white">
+                      {codeSample}
+                    </pre>
+                  </div>
+                </div>
+                <div
+                  class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/10 md:rounded-3xl"
+                  aria-hidden="true"
+                >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-background sm:h-32"
+      >
+      </div>
+    </div>
+    <div class="page-section page-gap">
+      <div class="mx-auto lg:mx-0">
+        <p class="text-base/7 font-semibold text-indigo-600">Deploy faster</p>
+        <h1 class="mt-2">A Smarter Starting Point for Modern Websites</h1>
+      </div>
+      <p class="mt-6 text-subtitle">
+        In the ever-evolving landscape of web development, getting a project off
+        the ground often involves juggling tools, vendors, and architectural
+        decisions that can easily spiral into complexity. What if there was a
+        way to cut through all of that—an <b>opinionated</b> but <b>flexible</b>
+        quickstart that makes it easier to <b>build and scale</b> a web project,
+        even when you don’t know the final scope yet?
+      </p>
+      <p class="mt-4 text-subtitle">
+        That's why I created this quickstart project. It’s a thoughtfully
+        designed boilerplate project that gives you everything you need to go
+        from concept to deployment—with zero guesswork and near-zero overhead.
+      </p>
+      <p class="mt-4 text-subtitle">
+        Check out the <a class="text-primary hover:underline" href="https://github.com/cooperjones/astro-cloudflare-kickstart" target="_blank"
+                  >Github Repository</a
+                > to learn more about the technical stack!
+      </p>
+      <div class="mt-16">
+        <h2>Built to Be Simple by Default, Powerful When Needed</h2>
+        <p class="text-description mt-4">
+          At its core, this quickstart template is built around Astro, a modern
+          static site generator (SSG) that emphasizes zero-JavaScript-by-default
+          for blazingly fast performance. Astro is perfect for sites that are
+          mostly static but occasionally need sprinkles of interactivity—thanks
+          to its Islands Architecture and seamless integration with React and
+          other frameworks.
+        </p>
+        <p class="text-description mt-4">
+          By default, your site is entirely static and can be hosted anywhere.
+          But with a flip of a switch, you can scale up to dynamic server-side
+          rendering, add APIs with Astro Endpoints, and even manage forms or
+          backends—all without needing to rethink your architecture. With this
+          kickstart project you get:
+        </p>
+        <ul role="list" class="mt-8 space-y-8 text-muted-foreground">
+          <li class="flex gap-x-3">
+            <svg
+              class="mt-1 size-5 flex-none text-indigo-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.5 17a4.5 4.5 0 0 1-1.44-8.765 4.5 4.5 0 0 1 8.302-3.046 3.5 3.5 0 0 1 4.504 4.272A4 4 0 0 1 15 17H5.5Zm3.75-2.75a.75.75 0 0 0 1.5 0V9.66l1.95 2.1a.75.75 0 1 0 1.1-1.02l-3.25-3.5a.75.75 0 0 0-1.1 0l-3.25 3.5a.75.75 0 1 0 1.1 1.02l1.95-2.1v4.59Z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span
+              ><strong class="font-semibold text-gray-900"
+                >SSG by Default.</strong
+              > Astro keeps your technical overhead low while making it easy to add
+              additional functionality through client side rendering only when you
+              need to.
+            </span>
+          </li>
+          <li class="flex gap-x-3">
+            <svg
+              class="mt-1 size-5 flex-none text-indigo-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span
+              ><strong class="font-semibold text-gray-900"
+                >Streamlined Dev Experience.</strong
+              > At its core, Astro takes care of common web dev chores like image
+              optimization, SEO best practices, routing, etc. while keeping development
+              simple. Editing .astro files feels like writing plain HTML until you
+              want to do something more.</span
+            >
+          </li>
+          <li class="flex gap-x-3">
+            <svg
+              class="mt-1 size-5 flex-none text-indigo-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                d="M4.632 3.533A2 2 0 0 1 6.577 2h6.846a2 2 0 0 1 1.945 1.533l1.976 8.234A3.489 3.489 0 0 0 16 11.5H4c-.476 0-.93.095-1.344.267l1.976-8.234Z"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                d="M4 13a2 2 0 1 0 0 4h12a2 2 0 1 0 0-4H4Zm11.24 2a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span
+              ><strong class="font-semibold text-gray-900"
+                >Efficient and Accessible.</strong
+              > Lightning fast. 100/100 Lighthouse performance.</span
+            >
+          </li>
+          <li class="flex gap-x-3">
+            <svg
+              class="mt-1 size-5 flex-none text-indigo-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                d="M4.632 3.533A2 2 0 0 1 6.577 2h6.846a2 2 0 0 1 1.945 1.533l1.976 8.234A3.489 3.489 0 0 0 16 11.5H4c-.476 0-.93.095-1.344.267l1.976-8.234Z"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                d="M4 13a2 2 0 1 0 0 4h12a2 2 0 1 0 0-4H4Zm11.24 2a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span
+              ><strong class="font-semibold text-gray-900"
+                >Fully customizable theme and styles. </strong
+              >This template takes advantage of tailwindcss for easy styling and layout customization. Additionally it comes preconfigured with a fully customizable theme and easy component generation to ensure a cohesive design throughout your site. (see <a class="hover:underline text-primary" href="https://ui.shadcn.com/docs">ShadCN documentation</a> for details)</span
+            >
+          </li>
+          <li class="flex gap-x-3">
+            <svg
+              class="mt-1 size-5 flex-none text-indigo-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                d="M4.632 3.533A2 2 0 0 1 6.577 2h6.846a2 2 0 0 1 1.945 1.533l1.976 8.234A3.489 3.489 0 0 0 16 11.5H4c-.476 0-.93.095-1.344.267l1.976-8.234Z"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                d="M4 13a2 2 0 1 0 0 4h12a2 2 0 1 0 0-4H4Zm11.24 2a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span
+              ><strong class="font-semibold text-gray-900">Extensible.</strong> Use
+              the Starlight integration to create a beautiful documentation site.
+              Use Astro's server actions to connect to a DB or data source. Use Astro's
+              content collections to create a static blog or portfolio without the
+              need for a CMS. The possibilities are endless.</span
+            >
+          </li>
+        </ul>
+      </div>
+      <!--<div class="mt-8">
+              <h2>One Vendor to Rule Them All</h2>
+              <p class="text-description mt-4">
+                Managing a modern web app often means piecing together services from a variety of vendors—one for domains, another for DNS, a third for SSL, a fourth for hosting, not to mention separate tools for databases, CAPTCHA, and analytics. Stitching them together can quickly lead to a fragile web of accounts, invoices, and configuration overhead.
+              </p>
+              <p class="text-description mt-4">
+                That complexity comes at a cost—not just financially, but cognitively. Every new vendor introduces more documentation to read, more integration to debug, and more opportunities for things to break during deployment.
+              </p>
+              <p class="text-description mt-4">
+                That’s why this quickstart is built around Cloudflare. With a single account, you get:
+              </p>
+            </div>-->
+
+      <div
+        class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:mt-16 lg:max-w-none lg:grid-cols-12"
+      >
+        <div class="relative lg:order-last lg:col-span-5">
+          <figure class="border-l border-indigo-600 pl-8">
+            <blockquote
+              class="text-xl/8 font-semibold tracking-tight text-foreground"
+            >
+              <p>
+                “Perfection is achieved, not when there is nothing more to add,
+                but when there is nothing left to take away.”
+              </p>
+            </blockquote>
+            <div class="text-sm/6">
+              <div class="font-semibold text-foreground">
+                - Antoine de Saint-Exupéry
+              </div>
+            </div>
+          </figure>
+        </div>
+        <div class="max-w-xl text-base/7 lg:col-span-7">
+          <h2>One Vendor to Rule Them All</h2>
+          <p class="text-description mt-4">
+            Here’s where the template really shines: <b>Cloudflare</b>. Instead
+            of stitching together multiple providers for domain registration,
+            DNS, SSL, hosting, CAPTCHA, and database services, Cloudflare gives
+            you a unified platform for all of these services along with a
+            generous free hosting tier.
+          </p>
+          <p class="text-description mt-4">
+            With Cloudflare you can get your entire site up and running for <b
+              >only the cost of your domain!</b
+            >
+          </p>
+        </div>
+      </div>
+      <div class="mt-16">
+        <h2>Why Use This Kickstart</h2>
+        <p class="text-description mt-4">
+          At the end of the day, what you are building is more important than
+          the tools you use to build it. This kickstart project is designed to
+          eliminate friction and accelerate your web development workflow.
+          Whether you're building a landing page, a documentation hub, or a
+          full-fledged web app, this boilerplate gives you a solid,
+          production-ready foundation—without the usual complexity. It combines
+          the simplicity of Astro with a thoughtfully curated tech stack and
+          first-class integration with Cloudflare, so you can go from idea to
+          deployment in minutes. No more wrestling with scattered tools or
+          architecture decisions. Just clean code, smart defaults, and the
+          flexibility to scale when you're ready.
+        </p>
+      </div>
+    </div>
+      <div class="mt-16 bg-primary py-16">
+        <div class="page-section text-primary-foreground">
+          <h2 class="mb-4">Ready to get Started?</h2>
+          <Button size="lg" as="a" href="https://github.com/cooperjones/astro-cloudflare-kickstart" variant="secondary" target="_blank"
+                  >Head over to the Github repository <span aria-hidden="true">→</span></Button
+                >
+        </div>
+      </div>
+  </div>
+</RootLayout>
