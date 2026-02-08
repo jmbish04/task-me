@@ -1,0 +1,101 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { createSupabaseClientFromEnv } from "@/lib/supabase";
+
+export const prerender = false;
+
+const env = (Astro.locals.runtime?.env ?? import.meta.env) as Record<string, string>;
+const supabase = createSupabaseClientFromEnv(env);
+
+const { data: projects } = supabase
+  ? await supabase
+      .from("projects")
+      .select("id, title, description, created_at")
+      .order("created_at", { ascending: false })
+  : { data: [] };
+---
+
+<RootLayout title="Taskosaur-AI Dashboard">
+  <section class="page-section page-gap">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div class="max-w-2xl space-y-3">
+        <p class="text-base/7 font-semibold text-indigo-600">Taskosaur-AI</p>
+        <h1 class="mt-2">Dashboard</h1>
+        <p class="text-subtitle">
+          Generate new project plans and keep track of active initiatives across
+          your AI-native portfolio.
+        </p>
+      </div>
+      <form
+        class="w-full max-w-xl space-y-4 rounded-xl border bg-card p-6 shadow-sm"
+        method="post"
+        action="/api/genesis"
+      >
+        <label class="text-sm font-semibold text-card-foreground" for="prompt">
+          New project prompt
+        </label>
+        <Textarea
+          id="prompt"
+          name="prompt"
+          required
+          rows={4}
+          placeholder="Build an Uber for Dog Walkers with task automation."
+        />
+        <Button type="submit" variant="default">
+          Generate plan with Genesis
+        </Button>
+      </form>
+    </div>
+  </section>
+
+  <section class="page-section">
+    <div class="flex items-center justify-between">
+      <h2>Active Projects</h2>
+      <a href="/dashboard" class="text-sm font-semibold text-primary">
+        Refresh list
+      </a>
+    </div>
+    <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {(projects ?? []).map((project) => (
+        <Card>
+          <CardHeader>
+            <CardTitle as="h3">{project.title}</CardTitle>
+            <CardDescription>
+              {project.description ?? "No description available yet."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm text-muted-foreground">
+              Created {new Date(project.created_at).toLocaleDateString()}.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button as="a" href={`/projects/${project.id}`} variant="outline">
+              View project board
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+      {(projects ?? []).length === 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle as="h3">No projects yet</CardTitle>
+            <CardDescription>
+              Kickstart a plan using the Genesis prompt form above.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
+    </div>
+  </section>
+</RootLayout>
