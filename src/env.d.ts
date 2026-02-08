@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly GITHUB_TOKEN?: string;
   readonly JULES_API_URL?: string;
   readonly R2_PUBLIC_BASE_URL?: string;
+  readonly GENESIS_AI_MODEL?: string;
 }
 
 interface ImportMeta {

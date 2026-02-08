@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ params, locals }) => {
     .order("created_at", { ascending: false })
     .limit(1);
 
-  await delegateToJules(
+  const julesResult = await delegateToJules(
     {
       repoUrl: project?.repo_url ?? "",
       taskDescription: task.description ?? task.title,
@@ -54,6 +54,15 @@ export const POST: APIRoute = async ({ params, locals }) => {
     },
     { apiUrl: env.JULES_API_URL },
   );
+
+  if (!julesResult.ok) {
+    console.error("Jules delegation failed", julesResult.status);
+    const statusLabel = julesResult.status.split(":")[0] ?? "error";
+    return new Response(
+      `Failed to delegate task (${statusLabel}). Please try again or contact support.`,
+      { status: 502 },
+    );
+  }
 
   return Response.redirect(`/tasks/${taskId}`, 303);
 };

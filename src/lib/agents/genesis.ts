@@ -12,6 +12,7 @@ export type GenesisEnv = SupabaseEnv &
     AI?: AiBinding;
     STITCH_API_KEY?: string;
     GITHUB_TOKEN?: string;
+    GENESIS_AI_MODEL?: string;
   };
 
 type GenesisTask = {
@@ -36,6 +37,10 @@ type GenesisPlan = {
   description?: string;
   epics: GenesisEpic[];
 };
+
+// Default Cloudflare Workers AI model identifier; see https://developers.cloudflare.com/workers-ai/models/.
+// Override via GENESIS_AI_MODEL for larger models or higher fidelity plans.
+const DEFAULT_GENESIS_MODEL = "@cf/meta/llama-3-8b-instruct";
 
 const KNOWLEDGE_TOOLS = [
   {
@@ -132,7 +137,11 @@ const extractPlan = (raw: unknown): GenesisPlan => {
   return (content as GenesisPlan) ?? FALLBACK_PLAN;
 };
 
-const generatePlan = async (prompt: string, ai?: AiBinding) => {
+const generatePlan = async (
+  prompt: string,
+  ai?: AiBinding,
+  model = DEFAULT_GENESIS_MODEL,
+) => {
   if (!ai) {
     return FALLBACK_PLAN;
   }
@@ -145,7 +154,7 @@ const generatePlan = async (prompt: string, ai?: AiBinding) => {
     { role: "user", content: prompt },
   ];
 
-  const response = await ai.run("@cf/meta/llama-3-8b-instruct", {
+  const response = await ai.run(model, {
     messages,
     tools: KNOWLEDGE_TOOLS,
   });
@@ -182,7 +191,8 @@ const getProjectIdFromResponse = (response: unknown, fallback: string) => {
 };
 
 export const runGenesis = async (prompt: string, env: GenesisEnv) => {
-  const plan = await generatePlan(prompt, env.AI);
+  const model = env.GENESIS_AI_MODEL ?? DEFAULT_GENESIS_MODEL;
+  const plan = await generatePlan(prompt, env.AI, model);
   const repoName = slugify(plan.title || prompt || "taskosaur-ai");
 
   let repoUrl: string | null = null;
