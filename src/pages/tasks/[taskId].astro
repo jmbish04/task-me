@@ -1,0 +1,109 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { createSupabaseClientFromEnv } from "@/lib/supabase";
+
+export const prerender = false;
+
+const { taskId } = Astro.params;
+const env = (Astro.locals.runtime?.env ?? import.meta.env) as Record<string, string>;
+const supabase = createSupabaseClientFromEnv(env);
+
+const { data: task } = supabase
+  ? await supabase
+      .from("tasks")
+      .select("id, title, description, status, story_id")
+      .eq("id", taskId ?? "")
+      .single()
+  : { data: null };
+
+const { data: story } = supabase
+  ? await supabase
+      .from("stories")
+      .select("id, title, project_id")
+      .eq("id", task?.story_id ?? "")
+      .single()
+  : { data: null };
+
+const { data: mockups } = supabase
+  ? await supabase
+      .from("mockups")
+      .select("r2_url, source_url")
+      .eq("story_id", story?.id ?? "")
+      .order("created_at", { ascending: false })
+      .limit(1)
+  : { data: [] };
+
+const mockupUrl = mockups?.[0]?.r2_url ?? mockups?.[0]?.source_url ?? null;
+---
+
+<RootLayout title="Task Detail">
+  <section class="page-section page-gap">
+    <div class="flex flex-col gap-2">
+      <a
+        class="text-sm font-semibold text-primary"
+        href={story?.id ? `/stories/${story.id}/tasks` : "/dashboard"}
+      >
+        ← Back to tasks
+      </a>
+      <h1>{task?.title ?? "Task Detail"}</h1>
+      <p class="text-subtitle">
+        {task?.description ?? "Use Jules to implement this task in the repo."}
+      </p>
+    </div>
+  </section>
+
+  <section class="page-section">
+    <div class="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+      <Card>
+        <CardHeader>
+          <CardTitle as="h3">Task Brief</CardTitle>
+          <CardDescription>
+            Status:{" "}
+            <span class="font-semibold text-emerald-700">
+              {task?.status ?? "pending"}
+            </span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p class="text-sm text-muted-foreground">
+            Story: {story?.title ?? "Story not found"}
+          </p>
+          <form method="post" action={`/api/tasks/${taskId}/delegate`}>
+            <Button type="submit" variant="default">
+              Delegate to Jules
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle as="h3">Visual Context</CardTitle>
+          <CardDescription>
+            Latest mockup linked to this story for context.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {mockupUrl ? (
+            <img
+              src={mockupUrl}
+              alt="Latest mockup"
+              class="w-full rounded-lg border"
+            />
+          ) : (
+            <div class="flex min-h-[220px] items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
+              No mockup available yet.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  </section>
+</RootLayout>
